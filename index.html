@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Геометрия: Теорема Пифагора — презентация</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-dark: #0f1a2e;
+            --bg-card: #1a2942;
+            --accent: #4a9eff;
+            --accent-2: #f0a04b;
+            --text: #e8eef7;
+            --text-dim: #a5b6cd;
+            --success: #2ecc71;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 30% 20%, #1e3a5f 0%, #0a1424 60%, #050a14 100%);
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        /* -------- Контейнер презентации -------- */
+        .presentation {
+            width: 100%;
+            max-width: 1000px;
+            height: 640px;
+            position: relative;
+            background: rgba(26, 41, 66, 0.7);
+            border-radius: 28px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(120, 160, 220, 0.18);
+            backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+
+        /* -------- Слайды -------- */
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: 50px 60px;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(40px);
+            transition: opacity 0.55s ease, transform 0.55s ease, visibility 0.55s;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .slide.exit-left {
+            transform: translateX(-40px);
+        }
+
+        /* -------- Типографика -------- */
+        .slide-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(74, 158, 255, 0.12);
+            padding: 6px 16px;
+            border-radius: 100px;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            margin-bottom: 22px;
+            align-self: flex-start;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 3.4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 22px;
+            background: linear-gradient(135deg, #ffffff 0%, #9dc4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.8px;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        h2 .accent {
+            color: var(--accent-2);
+        }
+
+        p {
+            font-size: 1.15rem;
+            line-height: 1.65;
+            color: var(--text-dim);
+            max-width: 780px;
+        }
+
+        p strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* -------- Титульный слайд -------- */
+        .title-slide {
+            justify-content: center;
+            align-items: flex-start;
+            background: radial-gradient(circle at 85% 20%, rgba(74, 158, 255, 0.22), transparent 55%);
+        }
+
+        .title-slide .formula-hero {
+            font-family: 'JetBrains Mono', 'Cascadia Code', monospace;
+            font-size: 1.5rem;
+            color: var(--accent-2);
+            margin-top: 18px;
+            padding: 14px 26px;
+            background: rgba(240, 160, 75, 0.1);
+            border-radius: 14px;
+            border-left: 4px solid var(--accent-2);
+            align-self: flex-start;
+        }
+
+        .title-slide .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+
+        /* -------- Слайд с содержанием -------- */
+        .toc-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .toc-list li {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 18px 24px;
+            background: rgba(255, 255, 255, 0.035);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 1.15rem;
+            color: var(--text);
+            transition: all 0.25s ease;
+        }
+
+        .toc-list li:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: rgba(74, 158, 255, 0.3);
+            transform: translateX(6px);
+        }
+
+        .toc-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 32px;
+        }
+
+        /* -------- Слайд с теоремой -------- */
+        .theorem-box {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.12), rgba(240, 160, 75, 0.08));
+            border: 1px solid rgba(74, 158, 255, 0.25);
+            border-radius: 22px;
+            padding: 32px 38px;
+            margin-top: 12px;
+            position: relative;
+        }
+
+        .theorem-box::before {
+            content: 'ТЕОРЕМА';
+            position: absolute;
+            top: -11px;
+            left: 30px;
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            background: var(--bg-card);
+            color: var(--accent-2);
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(240, 160, 75, 0.4);
+            font-weight: 700;
+        }
+
+        .theorem-box .theorem-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        .formula-big {
+            font-family: 'JetBrains Mono', 'Cascadia Code', monospace;
+            font-size: 2.6rem;
+            font-weight: 700;
+            text-align: center;
+            color: #ffffff;
+            margin: 26px 0 10px;
+            letter-spacing: 2px;
+        }
+
+        .formula-big .a-c { color: #6bb0ff; }
+        .formula-big .b-c { color: #f0a04b; }
+        .formula-big .c-c { color: #2ecc71; }
+
+        /* -------- Слайд с доказательством -------- */
+        .proof-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .step {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .step-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--accent);
+            background: rgba(74, 158, 255, 0.15);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 1.05rem;
+            line-height: 1.55;
+            color: var(--text-dim);
+        }
+
+        .step-text strong {
+            color: var(--text);
+        }
+
+        .step-text code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(74, 158, 255, 0.12);
+            color: #9dc4ff;
+            padding: 1px 8px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        /* -------- Слайд с применением -------- */
+        .apps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 14px;
+        }
+
+        .app-card {
+            padding: 22px 24px;
+            background: rgba(255, 255, 255, 0.035);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.25s ease;
+        }
+
+        .app-card:hover {
+            background: rgba(74, 158, 255, 0.08);
+            border-color: rgba(74, 158, 255, 0.28);
+            transform: translateY(-3px);
+        }
+
+        .app-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .app-card h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .app-card p {
+            font-size: 0.92rem;
+            line-height: 1.5;
+            color: var(--text-dim);
+        }
+
+        /* -------- Интерактивный слайд -------- */
+        .interactive-slide {
+            padding: 34px 40px;
+        }
+
+        .interactive-slide h2 {
+            font-size: 1.75rem;
+            margin-bottom: 6px;
+        }
+
+        .interactive-slide .hint {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-bottom: 18px;
+        }
+
+        .interactive-slide .hint b {
+            color: var(--accent-2);
+        }
+
+        .canvas-wrapper {
+            display: flex;
+            justify-content: center;
+            border-radius: 20px;
+            background: #fbfdff;
+            padding: 4px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+            flex: 1;
+            min-height: 0;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            border-radius: 16px;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        .info-panel {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            gap: 12px;
+        }
+
+        .values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+
+        .values span {
+            background: rgba(74, 158, 255, 0.12);
+            padding: 7px 18px;
+            border-radius: 40px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+        }
+
+        .values .label {
+            color: #9dc4ff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .values .digit {
+            font-weight: 700;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            min-width: 52px;
+            text-align: right;
+        }
+
+        .theorem-live {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 8px 22px;
+            border-radius: 40px;
+            background: var(--accent);
+            color: #06121f;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .theorem-live.verified {
+            background: var(--success);
+        }
+
+        /* -------- Навигация -------- */
+        .nav {
+            position: absolute;
+            bottom: 22px;
+            right: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(120, 160, 220, 0.3);
+            background: rgba(26, 41, 66, 0.85);
+            color: var(--text);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: var(--accent);
+            color: #06121f;
+            border-color: var(--accent);
+            transform: scale(1.08);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .dots {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 9px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(120, 160, 220, 0.28);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: var(--accent);
+            width: 28px;
+            border-radius: 5px;
+        }
+
+        /* -------- Прогресс-бар -------- */
+        .progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.5s ease;
+            z-index: 10;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* -------- Декор -------- */
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* -------- Адаптив -------- */
+        @media (max-width: 720px) {
+            body { padding: 0; }
+            .presentation {
+                border-radius: 0;
+                height: 100vh;
+                max-width: 100%;
+            }
+            .slide { padding: 30px 24px; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.6rem; }
+            .formula-big { font-size: 1.9rem; }
+            .apps-grid { grid-template-columns: 1fr; }
+            .interactive-slide { padding: 24px 18px; }
+            .nav { bottom: 14px; right: 14px; }
+            .dots { bottom: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation" id="presentation">
+    <div class="progress" id="progress"></div>
+
+    <!-- ========== СЛАЙД 1: ТИТУЛ ========== -->
+    <section class="slide title-slide active" data-index="0">
+        <div class="slide-tag">Геометрия · 8 класс</div>
+        <h1>Теорема<br>Пифагора</h1>
+        <p class="subtitle">Одно из самых известных утверждений в математике</p>
+        <div class="formula-hero">a² + b² = c²</div>
+    </section>
+
+    <!-- ========== СЛАЙД 2: СОДЕРЖАНИЕ ========== -->
+    <section class="slide" data-index="1">
+        <div class="slide-tag">План</div>
+        <h2>Что мы <span class="accent">узнаем</span></h2>
+        <ul class="toc-list">
+            <li><span class="toc-num">01</span> Формулировка теоремы</li>
+            <li><span class="toc-num">02</span> Идея доказательства</li>
+            <li><span class="toc-num">03</span> Где это применяется</li>
+            <li><span class="toc-num">04</span> Интерактивная проверка</li>
+        </ul>
+    </section>
+
+    <!-- ========== СЛАЙД 3: ФОРМУЛИРОВКА ========== -->
+    <section class="slide" data-index="2">
+        <div class="slide-tag">Теория</div>
+        <h2>Формулировка <span class="accent">теоремы</span></h2>
+        <div class="theorem-box">
+            <p class="theorem-text">
+                В <strong>прямоугольном</strong> треугольнике квадрат гипотенузы равен
+                сумме квадратов катетов.
+            </p>
+            <div class="formula-big">
+                <span class="a-c">a</span>² +
+                <span class="b-c">b</span>² =
+                <span class="c-c">c</span>²
+            </div>
+            <p style="text-align:center; color: var(--text-dim); font-size: 0.95rem;">
+                где <strong style="color:#6bb0ff">a</strong> и <strong style="color:#f0a04b">b</strong> — катеты,
+                <strong style="color:#2ecc71">c</strong> — гипотенуза
+            </p>
+        </div>
+    </section>
+
+    <!-- ========== СЛАЙД 4: ДОКАЗАТЕЛЬСТВО ========== -->
+    <section class="slide" data-index="3">
+        <div class="slide-tag">Доказательство</div>
+        <h2>Идея <span class="accent">доказательства</span></h2>
+        <div class="proof-steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                    Достроим прямоугольный треугольник до квадрата со стороной <code>(a + b)</code>.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                    Внутри получится <strong>малый квадрат</strong> со стороной <code>c</code>
+                    и четыре равных прямоугольных треугольника.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                    Площадь большого квадрата: <code>(a + b)²</code>.
+                    С другой стороны: <code>c² + 4 · (½ab)</code>.
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-text">
+                    Приравниваем: <code>a² + 2ab + b² = c² + 2ab</code>.
+                    Сокращаем <code>2ab</code> и получаем <strong>a² + b² = c²</strong>.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== СЛАЙД 5: ПРИМЕНЕНИЕ ========== -->
+    <section class="slide" data-index="4">
+        <div class="slide-tag">Практика</div>
+        <h2>Где это <span class="accent">применяется</span></h2>
+        <div class="apps-grid">
+            <div class="app-card">
+                <span class="app-icon">🏗️</span>
+                <h3>Строительство</h3>
+                <p>Разметка прямых углов, расчёт диагоналей и длин стропил.</p>
+            </div>
+            <div class="app-card">
+                <span class="app-icon">🗺️</span>
+                <h3>Навигация</h3>
+                <p>Кратчайшее расстояние между точками на плоскости и карте.</p>
+            </div>
+            <div class="app-card">
+                <span class="app-icon">📐</span>
+                <h3>Дизайн и черчение</h3>
+                <p>Расчёт размеров, проверка перпендикулярности, построение макетов.</p>
+            </div>
+            <div class="app-card">
+                <span class="app-icon">💻</span>
+                <h3>Компьютерная графика</h3>
+                <p>Вычисление расстояний, коллизии и работа с векторами.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== СЛАЙД 6: ИНТЕРАКТИВ ========== -->
+    <section class="slide interactive-slide" data-index="5">
+        <div class="slide-tag">Проверь сам</div>
+        <h2>Интерактивная <span class="accent">проверка</span></h2>
+        <p class="hint">Перетаскивай точки <b>A</b> и <b>B</b> — и смотри, как теорема работает.</p>
+
+        <div class="canvas-wrapper">
+            <canvas id="pythagorasCanvas" width="800" height="400"></canvas>
+        </div>
+
+        <div class="info-panel">
+            <div class="values">
+                <span><span class="label">a =</span> <span class="digit" id="sideA">0.0</span></span>
+                <span><span class="label">b =</span> <span class="digit" id="sideB">0.0</span></span>
+                <span><span class="label">c =</span> <span class="digit" id="sideC">0.0</span></span>
+            </div>
+            <div class="theorem-live" id="theoremDisplay">a² + b² = c²</div>
+        </div>
+    </section>
+
+    <!-- ========== НАВИГАЦИЯ ========== -->
+    <div class="dots" id="dots"></div>
+    <div class="nav">
+        <button class="nav-btn" id="prevBtn" aria-label="Назад">←</button>
+        <button class="nav-btn" id="nextBtn" aria-label="Вперёд">→</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        //  ПРЕЗЕНТАЦИЯ (слайды, навигация)
+        // ============================================================
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const dotsContainer = document.getElementById('dots');
+        const progress = document.getElementById('progress');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let current = 0;
+        const total = slides.length;
+
+        // Создаём точки-индикаторы
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.dataset.index = i;
+            dot.addEventListener('click', () => goTo(i));
+            dotsContainer.appendChild(dot);
+        });
+        const dots = Array.from(document.querySelectorAll('.dot'));
+
+        function goTo(index) {
+            if (index < 0 || index >= total || index === current) return;
+            const oldSlide = slides[current];
+            const newSlide = slides[index];
+
+            oldSlide.classList.remove('active');
+            oldSlide.classList.add('exit-left');
+            setTimeout(() => oldSlide.classList.remove('exit-left'), 550);
+
+            newSlide.classList.add('active');
+
+            dots[current].classList.remove('active');
+            dots[index].classList.add('active');
+
+            current = index;
+            updateProgress();
+            updateNavButtons();
+
+            // Если перешли на интерактивный слайд — перерисовываем canvas
+            if (index === 5) {
+                // Небольшая задержка, чтобы canvas уже был виден
+                setTimeout(() => { if (typeof drawInteractive === 'function') drawInteractive(); }, 120);
+            }
+        }
+
+        function updateProgress() {
+            const percent = ((current + 1) / total) * 100;
+            progress.style.width = percent + '%';
+        }
+
+        function updateNavButtons() {
+            prevBtn.disabled = current === 0;
+            nextBtn.disabled = current === total - 1;
+        }
+
+        prevBtn.addEventListener('click', () => goTo(current - 1));
+        nextBtn.addEventListener('click', () => goTo(current + 1));
+
+        // Управление клавиатурой
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                goTo(current + 1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                goTo(current - 1);
+            }
+        });
+
+        // ============================================================
+        //  ИНТЕРАКТИВНАЯ ЧАСТЬ (canvas)
+        // ============================================================
+        const canvas = document.getElementById('pythagorasCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const sideAEl = document.getElementById('sideA');
+        const sideBEl = document.getElementById('sideB');
+        const sideCEl = document.getElementById('sideC');
+        const theoremEl = document.getElementById('theoremDisplay');
+
+        // Точка C — прямой угол (фиксирована)
+        const C = { x: 300, y: 300 };
+
+        // Перетаскиваемые точки (начальные позиции)
+        let A = { x: 300, y: 120 }; // вертикальный катет
+        let B = { x: 620, y: 300 }; // горизонтальный катет
+
+        const MIN_SIDE = 30;
+        const MAX_SIDE = 320;
+
+        let dragging = null;
+        let dragOffsetX = 0, dragOffsetY = 0;
+
+        // ---- Вспомогательные ----
+        function clamp(v, min, max) {
+            return Math.min(max, Math.max(min, v));
+        }
+
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault();
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        // ---- Отрисовка ----
+        function drawInteractive() {
+            if (!canvas || !ctx) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Сетка
+            ctx.strokeStyle = '#e8eef6';
+            ctx.lineWidth = 0.8;
+            const step = 40;
+            for (let x = 0; x <= canvas.width; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // Треугольник
+            ctx.beginPath();
+            ctx.moveTo(A.x, A.y);
+            ctx.lineTo(B.x, B.y);
+            ctx.lineTo(C.x, C.y);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(74, 158, 255, 0.12)';
+            ctx.fill();
+            ctx.strokeStyle = '#1e3d6e';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Прямой угол в C
+            const s = 16;
+            ctx.beginPath();
+            ctx.moveTo(C.x, C.y - s);
+            ctx.lineTo(C.x + s, C.y - s);
+            ctx.lineTo(C.x + s, C.y);
+            ctx.strokeStyle = '#1e3d6e';
+            ctx.lineWidth = 2.2;
+            ctx.stroke();
+
+            // Длины
+            const a = Math.abs(A.y - C.y);
+            const b = Math.abs(B.x - C.x);
+            const c = Math.hypot(B.x - A.x, B.y - A.y);
+
+            // Подписи
+            ctx.font = 'bold 19px "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = '#ffffff';
+            ctx.shadowBlur = 6;
+
+            ctx.fillStyle = '#0a2a4a';
+            // a — вертикальный катет
+            ctx.fillText('a', (A.x + C.x) / 2 - 20, (A.y + C.y) / 2);
+            // b — горизонтальный катет
+            ctx.fillText('b', (C.x + B.x) / 2, (C.y + B.y) / 2 + 24);
+            // c — гипотенуза
+            const mx = (A.x + B.x) / 2;
+            const my = (A.y + B.y) / 2;
+            const dx = B.x - A.x, dy = B.y - A.y;
+            const len = Math.hypot(dx, dy) || 1;
+            let nx = -dy / len, ny = dx / len;
+            // нормаль должна смотреть наружу от C
+            const dot = nx * (C.x - mx) + ny * (C.y - my);
+            if (dot > 0) { nx = -nx; ny = -ny; }
+            ctx.fillText('c', mx + nx * 26, my + ny * 26);
+
+            ctx.shadowBlur = 0;
+
+            // Вершины
+            function drawVertex(p, label, draggable) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, draggable ? 9 : 7, 0, 2 * Math.PI);
+                ctx.fillStyle = draggable
+                    ? (dragging === label ? '#f0a04b' : '#1e3d6e')
+                    : '#5c6f8c';
+                ctx.fill();
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                ctx.font = 'bold 16px "Segoe UI", sans-serif';
+                ctx.fillStyle = '#0a1a2f';
+                ctx.shadowColor = '#ffffff';
+                ctx.shadowBlur = 5;
+                const offsets = {
+                    A: [-18, -18],
+                    B: [20, -18],
+                    C: [-20, 26]
+                };
+                const off = offsets[label] || [0, 0];
+                ctx.fillText(label, p.x + off[0], p.y + off[1]);
+                ctx.shadowBlur = 0;
+            }
+
+            drawVertex(A, 'A', true);
+            drawVertex(B, 'B', true);
+            drawVertex(C, 'C', false);
+
+            // Обновляем текст
+            const scale = 0.1;
+            const aU = (a * scale).toFixed(1);
+            const bU = (b * scale).toFixed(1);
+            const cU = (c * scale).toFixed(1);
+
+            sideAEl.textContent = aU;
+            sideBEl.textContent = bU;
+            sideCEl.textContent = cU;
+
+            const diff = Math.abs((a * a + b * b) - c * c) * scale * scale;
+            if (diff < 0.5) {
+                theoremEl.classList.add('verified');
+                theoremEl.textContent = `${aU}² + ${bU}² = ${cU}²`;
+            } else {
+                theoremEl.classList.remove('verified');
+                theoremEl.textContent = `${aU}² + ${bU}² ≈ ${cU}²`;
+            }
+        }
+
+        // ---- Перетаскивание ----
+        function onPointerDown(e) {
+            const { x, y } = getCanvasCoords(e);
+            const distA = Math.hypot(x - A.x, y - A.y);
+            const distB = Math.hypot(x - B.x, y - B.y);
+
+            if (distA < 32) {
+                dragging = 'A';
+                dragOffsetX = x - A.x;
+                dragOffsetY = y - A.y;
+            } else if (distB < 32) {
+                dragging = 'B';
+                dragOffsetX = x - B.x;
+                dragOffsetY = y - B.y;
+            } else {
+                return;
+            }
+            if (canvas.setPointerCapture && e.pointerId !== undefined) {
+                canvas.setPointerCapture(e.pointerId);
+            }
+            drawInteractive();
+        }
+
+        function onPointerMove(e) {
+            if (!dragging) return;
+            e.preventDefault();
+            const { x, y } = getCanvasCoords(e);
+
+            if (dragging === 'A') {
+                let newY = y - dragOffsetY;
+                newY = clamp(newY, C.y - MAX_SIDE, C.y - MIN_SIDE);
+                A = { x: C.x, y: newY };
+            } else if (dragging === 'B') {
+                let newX = x - dragOffsetX;
+                newX = clamp(newX, C.x + MIN_SIDE, C.x + MAX_SIDE);
+                B = { x: newX, y: C.y };
+            }
+            drawInteractive();
+        }
+
+        function onPointerUp(e) {
+            if (dragging) {
+                dragging = null;
+                if (canvas.releasePointerCapture && e.pointerId !== undefined) {
+                    canvas.releasePointerCapture(e.pointerId);
+                }
+                drawInteractive();
+            }
+        }
+
+        // Слушатели
+        canvas.addEventListener('pointerdown', onPointerDown);
+        canvas.addEventListener('pointermove', onPointerMove);
+        canvas.addEventListener('pointerup', onPointerUp);
+        canvas.addEventListener('pointercancel', onPointerUp);
+
+        // Запрет скролла на тач-устройствах
+        canvas.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+        canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+        // Первичная отрисовка
+        drawInteractive();
+
+        // Перерисовка при изменении размера
+        window.addEventListener('resize', () => {
+            // canvas имеет фиксированный размер, но подстраивается через CSS
+        });
+
+        // Экспортируем для goTo
+        window.drawInteractive = drawInteractive;
+
+        // Инициализация прогресса и кнопок
+        updateProgress();
+        updateNavButtons();
+    })();
+</script>
+</body>
+</html>
